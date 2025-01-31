@@ -1,0 +1,85 @@
+name: STSIM
+manual_seed: 10
+data_folder: /ssd/Image_Datasets/NUUR-Textures6K
+gene_folder: /home/pappas/ViSiProg/interface/static/LLNL3
+num_nega_candi: 30
+feats_path: /home/pappas/ViSiProg/res/LLNL3feats.pt
+precalculated_path: precalculated
+nega_real_ratio: 0.3
+use_clip: True
+use_fourier: True
+fourier_dim: 128
+use_color: True
+rgb_range: 1
+pretrain_models_dir: None
+
+# STSIM_M path
+model_path: /home/pappas/ViSiProg/STSIM/weights/STSIM_macro_SCF_05122023/epoch_0460.pt
+
+datasets:
+  split_ratio: [0.8, 0.2]
+  train:
+    patch_size: 128
+    num_crops: 10
+    use_scale: False
+    use_flip: False
+    use_rot: False
+    noise:
+      use_noise: False
+      noise_type: Perlin
+
+    # data loader
+    use_shuffle: true
+    prefetch_mode: cpu
+
+    # precalculated json
+    # image name | list of negative examples
+    json_path: ~
+
+  val:
+    patch_size: 128
+    num_crops: 10
+    use_scale: False
+    use_flip: False
+    use_rot: False
+    noise:
+      use_noise: False
+      noise_type: Perlin
+
+    # data loader
+    use_shuffle: false
+    prefetch_mode: ~
+
+# training settings
+train:
+  use_grad_clip: False
+  batch_size: 256
+  margin: 0.5
+  dropout_rate: 0.3
+  layer_norm: True
+  batch_norm: False
+  optimizer:
+    type: Adam
+    lr: !!float 5e-5
+    weight_decay: !!float 1e-4
+    betas: [0.9, 0.99]
+  scheduler:
+    type: TrueCosineAnnealingLR
+    T_max: 100
+    eta_min: !!float 1e-7
+
+  total_iter: 200
+  warmup_iter: -1 # no warm up
+
+  loss: ~
+  visualization_freq: 5 
+
+# validation settings
+val:
+  val_freq: 10
+  batch_size: 512
+
+# logging settings
+logger:
+  print_freq: 1
+  save_checkpoint_freq: 10
